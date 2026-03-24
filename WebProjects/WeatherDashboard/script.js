@@ -7,19 +7,22 @@ searchBtn.addEventListener('click', function() {
   const city = cityInput.value;
   console.log(city);
   fetchWeather(city);
-  console.log(fetchWeather());
 });
 
 function fetchWeather(city){
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`;
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=imperial`;
 
   fetch(url)
     .then(function(response) {
       return response.json();
     })
     .then(function(data) {
-      console.log(data);
-      return data;
+      if(data.cod == 200){
+        displayWeather(data);
+      }else{
+        document.getElementById("weather-display").textContent = "City not found, Please try again"
+      }
+      
     })
     .catch(function(error) {
       console.log('Something went wrong:', error);
@@ -27,9 +30,12 @@ function fetchWeather(city){
 }
 
 function displayWeather(data) {
-    document.getElementById('city-name').textContent = data.name;
-    document.getElementById('temperature').textContent = 'Temp: ' + data.main.temp + '°C';
-    document.getElementById('description').textContent = 'Weather: ' + data.weather[0].description;
-    document.getElementById('humidity').textContent = 'Humidity: ' + data.main.humidity + '%';
-    document.getElementById('wind').textContent = 'Wind: ' + data.wind.speed + ' m/s';
+  document.getElementById('country-name').textContent = "Country : " + data.sys.country;
+  document.getElementById('city-name').textContent = "City : " + data.name;
+  document.getElementById('temperature').textContent = 'Temp: ' + data.main.temp + '°F';
+  document.getElementById('description').textContent =
+    'Weather: ' + data.weather[0].description.charAt(0).toUpperCase()
+    + data.weather[0].description.slice(1);
+  document.getElementById('humidity').textContent = 'Humidity: ' + data.main.humidity + '%';
+  document.getElementById('wind').textContent = 'Wind: ' + data.wind.speed + ' m/s';
 }
